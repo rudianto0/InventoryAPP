@@ -1,59 +1,216 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Inventory App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi manajemen inventori (stock) berbasis web dengan sistem autentikasi, manajemen user, role, dan permission.
 
-## About Laravel
+## Tech Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Laravel 12** (PHP 8.2+)
+- **Bootstrap 5** + **Bootstrap Icons** (via Vite & SCSS)
+- **MySQL** (database)
+- **Laravel Breeze** (scaffolding autentikasi — login, register, forgot/reset password)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Fitur
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Autentikasi (login, register, forgot & reset password)
+- Manajemen **User** (CRUD + toggle status aktif/nonaktif)
+- Manajemen **Role** (CRUD + attach permissions per role)
+- **Permission** berbasis role (seeder-only, bukan dari UI)
+- Middleware proteksi route: `permission:` dan `active`
+- Blade directive `@hasPermission` untuk menampilkan/menyembunyikan menu di sidebar
 
-## Learning Laravel
+## Prasyarat
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP >= 8.2
+- Composer
+- Node.js & npm
+- MySQL (atau database lain yang didukung Laravel)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## Cara Menjalankan Pertama Kali (Setelah Clone)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 1. Clone & masuk ke folder project
 
-### Premium Partners
+```bash
+git clone <url-repository> inventory-app
+cd inventory-app
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 2. Install dependency
 
-## Contributing
+```bash
+composer install
+npm install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Buat file environment
 
-## Code of Conduct
+```bash
+cp .env.example .env
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Lalu generate application key:
 
-## Security Vulnerabilities
+```bash
+php artisan key:generate
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 4. Konfigurasi database
+
+Buat database MySQL terlebih dahulu:
+
+```sql
+CREATE DATABASE inventory_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Kemudian atur koneksi database di file `.env`:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=inventory_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 5. Jalankan migrasi & seeder
+
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+> Saat development, bisa digabung sekaligus dengan `php artisan migrate:fresh --seed`.
+
+Seeder akan membuat data awal: 18 permissions, 4 role, dan 1 user Super Admin (lihat bagian [Akun Login](#akun-login-seeder)).
+
+### 6. Build asset frontend
+
+Development (dengan hot reload):
+
+```bash
+npm run dev
+```
+
+Production:
+
+```bash
+npm run build
+```
+
+### 7. Jalankan server
+
+```bash
+php artisan serve
+```
+
+Buka browser di: <http://localhost:8000>
+
+---
+
+## Akun Login (Seeder)
+
+Seeder `UserSeeder` membuat **1 user Super Admin**:
+
+| Nama | Email | Password | Role |
+|---|---|---|---|
+| Super Admin | `admin@example.com` | `password` | Super Admin |
+
+> **Catatan:** User baru yang melakukan registrasi sendiri (melalui halaman `/register`) otomatis mendapat role **Staff**.
+
+---
+
+## Daftar Role
+
+| Role | Slug | Keterangan |
+|---|---|---|
+| Super Admin | `super-admin` | Akses penuh ke semua fitur (otomatis punya semua permission, termasuk permission baru) |
+| Admin | `admin` | Mengelola user, goods-in, goods-out, dan stock |
+| Staff | `staff` | Mengelola goods-in, goods-out, dan melihat stock |
+| Manager | `manager` | Melihat goods-in, goods-out, stock, dan user |
+
+### Mapping Role → Permission
+
+| Role | Permissions |
+|---|---|
+| **Super Admin** | Semua permissions secara otomatis |
+| **Admin** | Semua kecuali `users.delete` dan `roles.*` (13 permissions) |
+| **Staff** | `goods-in.*`, `goods-out.*`, `stock.read` (9 permissions) |
+| **Manager** | `goods-in.read`, `goods-out.read`, `stock.read`, `users.read` (4 permissions) |
+
+---
+
+## Daftar Permission (18 Permission)
+
+| Module | Slug | Nama |
+|---|---|---|
+| users | `users.read` | View User |
+| users | `users.create` | Create User |
+| users | `users.update` | Update User |
+| users | `users.delete` | Delete User |
+| roles | `roles.read` | View Role |
+| roles | `roles.create` | Create Role |
+| roles | `roles.update` | Update Role |
+| roles | `roles.delete` | Delete Role |
+| goods-in | `goods-in.read` | View Goods In |
+| goods-in | `goods-in.create` | Create Goods In |
+| goods-in | `goods-in.update` | Update Goods In |
+| goods-in | `goods-in.delete` | Delete Goods In |
+| goods-out | `goods-out.read` | View Goods Out |
+| goods-out | `goods-out.create` | Create Goods Out |
+| goods-out | `goods-out.update` | Update Goods Out |
+| goods-out | `goods-out.delete` | Delete Goods Out |
+| stock | `stock.read` | View Stock |
+| stock | `stock.update` | Update Stock |
+
+> Permission hanya dikelola lewat `PermissionSeeder`, bukan dari UI. Jika menambah permission baru, tambahkan di seeder lalu jalankan ulang `php artisan db:seed --class=PermissionSeeder` (Super Admin otomatis mendapatkannya).
+
+---
+
+## Struktur Project (Ringkas)
+
+```
+app/
+├── Models/            # User, Role, Permission
+├── Http/
+│   ├── Controllers/   # Auth (Breeze), UserController, RoleController
+│   └── Middleware/    # CheckPermission, EnsureUserIsActive
+├── Traits/            # HasRoles
+└── Providers/
+database/
+├── migrations/
+└── seeders/           # DatabaseSeeder, PermissionSeeder, RoleSeeder, UserSeeder
+resources/
+├── js/
+├── sass/
+└── views/             # layouts/, dashboard, auth/, users/, roles/
+routes/
+└── web.php
+```
+
+---
+
+## Scripts Composer
+
+Tersedia beberapa script bantu di `composer.json`:
+
+| Perintah | Keterangan |
+|---|---|
+| `composer setup` | Install dependency, copy `.env`, generate key, migrate, install npm, build asset |
+| `composer dev` | Menjalankan server + queue + pail + vite secara bersamaan |
+| `composer test` | Menjalankan test suite |
+
+---
+
+## Catatan Tambahan
+
+- **Middleware `active`**: user yang dinonaktifkan (`is_active = false`) otomatis di-logout dan diblokir di request berikutnya.
+- **Middleware `permission:`**: contoh pemakaian `->middleware('permission:users.read')`.
+- **Blade directive `@hasPermission('slug')`**: dipakai di sidebar untuk menampilkan menu sesuai permission user.
+- **Forgot password** (development): set `MAIL_MAILER=log` di `.env` agar link reset password tampil di `storage/logs/laravel.log`.
+- Dokumentasi perencanaan lengkap ada di folder `plan/` (`setup.md` dan `user-login.md`).
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+[MIT license](https://opensource.org/licenses/MIT).
