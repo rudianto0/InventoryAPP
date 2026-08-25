@@ -7,7 +7,7 @@
         @csrf
 
         <div class="mb-3">
-            <label for="name" class="form-label">Nama</label>
+            <label for="name" class="form-label">Name</label>
             <input id="name" type="text" name="name" value="{{ old('name') }}"
                    class="form-control @error('name') is-invalid @enderror"
                    required autofocus autocomplete="name">
@@ -37,15 +37,15 @@
         </div>
 
         <div class="mb-3">
-            <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+            <label for="password_confirmation" class="form-label">Confirm Password</label>
             <input id="password_confirmation" type="password" name="password_confirmation"
                    class="form-control" required autocomplete="new-password">
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Daftar</button>
+        <button type="submit" class="btn btn-primary w-100">Register</button>
 
         <div class="text-center mt-3 small">
-            Sudah punya akun? <a href="{{ route('login') }}">Login</a>
+            Already have an account? <a href="{{ route('login') }}">Login</a>
         </div>
     </form>
 @endsection

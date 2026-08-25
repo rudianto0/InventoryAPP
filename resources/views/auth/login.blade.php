@@ -28,19 +28,19 @@
 
         <div class="mb-3 form-check">
             <input type="checkbox" name="remember" id="remember" class="form-check-input">
-            <label for="remember" class="form-check-label">Ingat saya</label>
+            <label for="remember" class="form-check-label">Remember me</label>
         </div>
 
         <div class="mb-3">
             @if (Route::has('password.request'))
-                <a href="{{ route('password.request') }}" class="small">Lupa Password?</a>
+                <a href="{{ route('password.request') }}" class="small">Forgot Password?</a>
             @endif
         </div>
 
         <button type="submit" class="btn btn-primary w-100">Login</button>
 
         <div class="text-center mt-3 small">
-            Belum punya akun? <a href="{{ route('register') }}">Daftar</a>
+            Don't have an account? <a href="{{ route('register') }}">Register</a>
         </div>
     </form>
 @endsection

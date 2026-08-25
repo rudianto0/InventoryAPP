@@ -371,14 +371,14 @@ public function run(): void
 | 6 | `roles` | `roles.create` | Create Role |
 | 7 | `roles` | `roles.update` | Update Role |
 | 8 | `roles` | `roles.delete` | Delete Role |
-| 9 | `goods-in` | `goods-in.read` | View Goods In |
-| 10 | `goods-in` | `goods-in.create` | Create Goods In |
-| 11 | `goods-in` | `goods-in.update` | Update Goods In |
-| 12 | `goods-in` | `goods-in.delete` | Delete Goods In |
-| 13 | `goods-out` | `goods-out.read` | View Goods Out |
-| 14 | `goods-out` | `goods-out.create` | Create Goods Out |
-| 15 | `goods-out` | `goods-out.update` | Update Goods Out |
-| 16 | `goods-out` | `goods-out.delete` | Delete Goods Out |
+| 9 | `stock-in` | `stock-in.read` | View Stock In |
+| 10 | `stock-in` | `stock-in.create` | Create Stock In |
+| 11 | `stock-in` | `stock-in.update` | Update Stock In |
+| 12 | `stock-in` | `stock-in.delete` | Delete Stock In |
+| 13 | `stock-out` | `stock-out.read` | View Stock Out |
+| 14 | `stock-out` | `stock-out.create` | Create Stock Out |
+| 15 | `stock-out` | `stock-out.update` | Update Stock Out |
+| 16 | `stock-out` | `stock-out.delete` | Delete Stock Out |
 | 17 | `stock` | `stock.read` | View Stock |
 | 18 | `stock` | `stock.update` | Update Stock |
 
@@ -390,8 +390,8 @@ public function run(): void
 |---|---|
 | **Super Admin** | ✅ Semua permissions secara otomatis (termasuk permission baru yang ditambahkan kemudian) |
 | **Admin** | Semua kecuali: `users.delete`, `roles.*` (13 permissions) |
-| **Staff** | `goods-in.*`, `goods-out.*`, `stock.read` (9 permissions) |
-| **Manager** | `goods-in.read`, `goods-out.read`, `stock.read`, `users.read` (4 permissions) |
+| **Staff** | `stock-in.*`, `stock-out.*`, `stock.read` (9 permissions) |
+| **Manager** | `stock-in.read`, `stock-out.read`, `stock.read`, `users.read` (4 permissions) |
 
 > **Super Admin:** Permission tidak di-attach di seeder. Method `hasPermission()` selalu mengembalikan `true` untuk role Super Admin, sehingga permission baru yang ditambahkan di kemudian hari otomatis dimiliki Super Admin tanpa perubahan apa pun.
 

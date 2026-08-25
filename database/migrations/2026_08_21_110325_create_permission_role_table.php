@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
+use App\Database\Migrations\AuditableMigration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+return new class extends AuditableMigration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('permission_role', function (Blueprint $table) {
+            $this->auditColumns($table);
+
             $table->foreignId('role_id')->constrained()->cascadeOnDelete();
             $table->foreignId('permission_id')->constrained()->cascadeOnDelete();
-            $table->primary(['role_id', 'permission_id']);
+            $table->index(['role_id', 'permission_id']);
         });
     }
 

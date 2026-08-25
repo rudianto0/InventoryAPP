@@ -126,9 +126,9 @@ Seeder `UserSeeder` membuat **1 user Super Admin**:
 | Role | Slug | Keterangan |
 |---|---|---|
 | Super Admin | `super-admin` | Akses penuh ke semua fitur (otomatis punya semua permission, termasuk permission baru) |
-| Admin | `admin` | Mengelola user, goods-in, goods-out, dan stock |
-| Staff | `staff` | Mengelola goods-in, goods-out, dan melihat stock |
-| Manager | `manager` | Melihat goods-in, goods-out, stock, dan user |
+| Admin | `admin` | Mengelola user, stock-in, stock-out, dan stock |
+| Staff | `staff` | Mengelola stock-in, stock-out, dan melihat stock |
+| Manager | `manager` | Melihat stock-in, stock-out, stock, dan user |
 
 ### Mapping Role → Permission
 
@@ -136,8 +136,8 @@ Seeder `UserSeeder` membuat **1 user Super Admin**:
 |---|---|
 | **Super Admin** | Semua permissions secara otomatis |
 | **Admin** | Semua kecuali `users.delete` dan `roles.*` (13 permissions) |
-| **Staff** | `goods-in.*`, `goods-out.*`, `stock.read` (9 permissions) |
-| **Manager** | `goods-in.read`, `goods-out.read`, `stock.read`, `users.read` (4 permissions) |
+| **Staff** | `stock-in.*`, `stock-out.*`, `stock.read` (9 permissions) |
+| **Manager** | `stock-in.read`, `stock-out.read`, `stock.read`, `users.read` (4 permissions) |
 
 ---
 
@@ -153,14 +153,14 @@ Seeder `UserSeeder` membuat **1 user Super Admin**:
 | roles | `roles.create` | Create Role |
 | roles | `roles.update` | Update Role |
 | roles | `roles.delete` | Delete Role |
-| goods-in | `goods-in.read` | View Goods In |
-| goods-in | `goods-in.create` | Create Goods In |
-| goods-in | `goods-in.update` | Update Goods In |
-| goods-in | `goods-in.delete` | Delete Goods In |
-| goods-out | `goods-out.read` | View Goods Out |
-| goods-out | `goods-out.create` | Create Goods Out |
-| goods-out | `goods-out.update` | Update Goods Out |
-| goods-out | `goods-out.delete` | Delete Goods Out |
+| stock-in | `stock-in.read` | View Stock In |
+| stock-in | `stock-in.create` | Create Stock In |
+| stock-in | `stock-in.update` | Update Stock In |
+| stock-in | `stock-in.delete` | Delete Stock In |
+| stock-out | `stock-out.read` | View Stock Out |
+| stock-out | `stock-out.create` | Create Stock Out |
+| stock-out | `stock-out.update` | Update Stock Out |
+| stock-out | `stock-out.delete` | Delete Stock Out |
 | stock | `stock.read` | View Stock |
 | stock | `stock.update` | Update Stock |
 

@@ -13,7 +13,7 @@
         @hasPermission('users.read')
         <li class="nav-item">
             <a href="{{ route('users.index') }}" class="nav-link {{ request()->routeIs('users.*') ? 'active' : '' }}">
-                <i class="bi bi-people"></i> Manajemen User
+                <i class="bi bi-people"></i> User Management
             </a>
         </li>
         @endhasPermission
@@ -21,7 +21,7 @@
         @hasPermission('roles.read')
         <li class="nav-item">
             <a href="{{ route('roles.index') }}" class="nav-link {{ request()->routeIs('roles.*') ? 'active' : '' }}">
-                <i class="bi bi-shield-lock"></i> Manajemen Role
+                <i class="bi bi-shield-lock"></i> Role Management
             </a>
         </li>
         @endhasPermission

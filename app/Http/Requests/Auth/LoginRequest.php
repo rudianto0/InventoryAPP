@@ -54,7 +54,7 @@ class LoginRequest extends FormRequest
             Auth::guard('web')->logout();
 
             throw ValidationException::withMessages([
-                'email' => 'Akun Anda dinonaktifkan.',
+                'email' => 'Your account has been deactivated.',
             ]);
         }
 

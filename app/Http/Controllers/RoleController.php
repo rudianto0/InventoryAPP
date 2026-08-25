@@ -6,17 +6,28 @@ use App\Http\Requests\RoleRequest;
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class RoleController extends Controller
 {
     /**
-     * List roles with user count.
+     * List roles with search and user count.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $roles = Role::withCount('users')->orderBy('name')->get();
+        $query = Role::withCount('users');
+
+        if ($search = $request->query('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('slug', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $roles = $query->orderBy('name')->get();
 
         return view('roles.index', compact('roles'));
     }
@@ -28,7 +39,7 @@ class RoleController extends Controller
     {
         $permissions = $this->groupedPermissions();
 
-        return view('roles.create', compact('permissions'));
+        return view('roles.create-or-edit', compact('permissions'));
     }
 
     /**
@@ -48,7 +59,7 @@ class RoleController extends Controller
 
         $role->permissions()->sync($request->input('permissions', []));
 
-        return redirect()->route('roles.index')->with('success', 'Role berhasil ditambahkan.');
+        return redirect()->route('roles.index')->with('success', 'Role added successfully.');
     }
 
     /**
@@ -58,7 +69,7 @@ class RoleController extends Controller
     {
         $permissions = $this->groupedPermissions();
 
-        return view('roles.edit', compact('role', 'permissions'));
+        return view('roles.create-or-edit', compact('role', 'permissions'));
     }
 
     /**
@@ -77,7 +88,7 @@ class RoleController extends Controller
             $user->clearPermissionCache();
         }
 
-        return redirect()->route('roles.index')->with('success', 'Role berhasil diperbarui.');
+        return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
     }
 
     /**
@@ -86,14 +97,14 @@ class RoleController extends Controller
     public function destroy(Role $role): RedirectResponse
     {
         if ($role->slug === 'super-admin') {
-            return redirect()->route('roles.index')->with('error', 'Role Super Admin tidak dapat dihapus.');
+            return redirect()->route('roles.index')->with('error', 'Super Admin role cannot be deleted.');
         }
 
         $users = $role->users()->get();
 
         foreach ($users as $user) {
             if ($user->roles()->count() === 1) {
-                return redirect()->route('roles.index')->with('error', "Role tidak dapat dihapus karena masih dipakai oleh user \"{$user->name}\".");
+                return redirect()->route('roles.index')->with('error', "Role cannot be deleted because it is still assigned to user \"{$user->name}\".");
             }
         }
 
@@ -103,7 +114,7 @@ class RoleController extends Controller
 
         $role->delete();
 
-        return redirect()->route('roles.index')->with('success', 'Role berhasil dihapus.');
+        return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
     }
 
     /**

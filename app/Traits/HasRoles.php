@@ -9,7 +9,9 @@ trait HasRoles
 {
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(\App\Models\Role::class);
+        return $this->belongsToMany(\App\Models\Role::class)
+            ->using(\App\Models\RoleUser::class)
+            ->withTimestamps();
     }
 
     public function hasRole(string $slug): bool

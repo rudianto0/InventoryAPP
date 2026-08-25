@@ -19,7 +19,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="password" class="form-label">Password Baru</label>
+            <label for="password" class="form-label">New Password</label>
             <input id="password" type="password" name="password"
                    class="form-control @error('password') is-invalid @enderror"
                    required autocomplete="new-password">
@@ -29,7 +29,7 @@
         </div>
 
         <div class="mb-3">
-            <label for="password_confirmation" class="form-label">Konfirmasi Password</label>
+            <label for="password_confirmation" class="form-label">Confirm Password</label>
             <input id="password_confirmation" type="password" name="password_confirmation"
                    class="form-control" required autocomplete="new-password">
         </div>

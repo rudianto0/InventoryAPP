@@ -14,7 +14,7 @@ class CheckPermission
     public function handle(Request $request, Closure $next, string $permission): Response
     {
         if (! $request->user() || ! $request->user()->hasPermission($permission)) {
-            abort(403, 'Anda tidak memiliki izin.');
+            abort(403, 'You do not have permission.');
         }
 
         return $next($request);

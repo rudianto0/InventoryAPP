@@ -1,10 +1,10 @@
 @extends('layouts.guest')
 
-@section('title', 'Lupa Password')
+@section('title', 'Forgot Password')
 
 @section('content')
     <div class="mb-4 small text-muted">
-        Lupa password? Masukkan email Anda dan kami akan mengirimkan link untuk mereset password.
+        Forgot your password? Enter your email and we will send you a link to reset your password.
     </div>
 
     @if (session('status'))
@@ -24,10 +24,10 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Kirim Link Reset</button>
+        <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
 
         <div class="text-center mt-3 small">
-            <a href="{{ route('login') }}">Kembali ke Login</a>
+            <a href="{{ route('login') }}">Back to Login</a>
         </div>
     </form>
 @endsection

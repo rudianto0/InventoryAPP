@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen User')
-@section('page-title', 'Manajemen User')
+@section('title', 'User Management')
+@section('page-title', 'User Management')
 
 @section('content')
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">Daftar User</h4>
+        <h4 class="mb-0">User List</h4>
         @hasPermission('users.create')
             <a href="{{ route('users.create') }}" class="btn btn-primary">
-                <i class="bi bi-plus-lg"></i> Tambah User
+                <i class="bi bi-plus-lg"></i> Add User
             </a>
         @endhasPermission
     </div>
@@ -16,16 +16,9 @@
     <div class="card">
         <div class="card-body">
             <form method="GET" action="{{ route('users.index') }}" class="row g-2 mb-3">
-                <div class="col-md-6">
+                <div class="col-md-9">
                     <input type="text" name="search" value="{{ request('search') }}" class="form-control"
-                           placeholder="Cari nama atau email...">
-                </div>
-                <div class="col-md-3">
-                    <select name="status" class="form-select">
-                        <option value="">Semua Status</option>
-                        <option value="1" {{ request('status') === '1' ? 'selected' : '' }}>Aktif</option>
-                        <option value="0" {{ request('status') === '0' ? 'selected' : '' }}>Nonaktif</option>
-                    </select>
+                           placeholder="Search name or email...">
                 </div>
                 <div class="col-md-3">
                     <button type="submit" class="btn btn-outline-secondary w-100">
@@ -38,33 +31,17 @@
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Nama</th>
+                            <th>Action</th>
+                            <th>Name</th>
                             <th>Email</th>
                             <th>Status</th>
                             <th>Roles</th>
-                            <th class="text-end">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($users as $user)
                             <tr>
-                                <td>{{ $users->firstItem() + $loop->index }}</td>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>
-                                    @if ($user->is_active)
-                                        <span class="badge bg-success">Aktif</span>
-                                    @else
-                                        <span class="badge bg-secondary">Nonaktif</span>
-                                    @endif
-                                </td>
-                                <td>
-                                    @foreach ($user->roles as $role)
-                                        <span class="badge bg-info text-dark">{{ $role->name }}</span>
-                                    @endforeach
-                                </td>
-                                <td class="text-end text-nowrap">
+                                <td class="text-nowrap">
                                     @hasPermission('users.update')
                                         <a href="{{ route('users.edit', $user) }}" class="btn btn-sm btn-outline-primary" title="Edit">
                                             <i class="bi bi-pencil"></i>
@@ -79,19 +56,33 @@
                                     @endhasPermission
                                     @hasPermission('users.delete')
                                         <form action="{{ route('users.destroy', $user) }}" method="POST" class="d-inline"
-                                              onsubmit="return confirm('Nonaktifkan user ini?');">
+                                              onsubmit="return confirm('Deactivate this user?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Nonaktifkan">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Deactivate">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
                                     @endhasPermission
                                 </td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>
+                                    @if ($user->is_active)
+                                        <span class="badge bg-success">Active</span>
+                                    @else
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @foreach ($user->roles as $role)
+                                        <span class="badge bg-info text-dark">{{ $role->name }}</span>
+                                    @endforeach
+                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">Tidak ada data user.</td>
+                                <td colspan="5" class="text-center text-muted py-4">No user data found.</td>
                             </tr>
                         @endforelse
                     </tbody>

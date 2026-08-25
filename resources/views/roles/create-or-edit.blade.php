@@ -1,35 +1,46 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Role')
-@section('page-title', 'Edit Role')
+@php
+    $isEdit = isset($role) && $role->exists;
+@endphp
+
+@section('title', $isEdit ? 'Edit Role' : 'Add Role')
+@section('page-title', $isEdit ? 'Edit Role' : 'Add Role')
 
 @section('content')
     <div class="card">
-        <div class="card-header">Form Edit Role</div>
+        <div class="card-header">{{ $isEdit ? 'Edit Role Form' : 'Add Role Form' }}</div>
         <div class="card-body">
-            <form method="POST" action="{{ route('roles.update', $role) }}">
+            <form method="POST" action="{{ $isEdit ? route('roles.update', $role) : route('roles.store') }}">
                 @csrf
-                @method('PUT')
+                @if ($isEdit)
+                    @method('PUT')
+                @endif
 
                 <div class="mb-3">
-                    <label for="name" class="form-label">Nama Role</label>
-                    <input type="text" name="name" id="name" value="{{ old('name', $role->name) }}"
+                    <label for="name" class="form-label">Role Name</label>
+                    <input type="text" name="name" id="name" value="{{ old('name', $role->name ?? '') }}"
                            class="form-control @error('name') is-invalid @enderror" required>
+                    @if (! $isEdit)
+                        <div class="form-text">The slug will be generated automatically from the name.</div>
+                    @endif
                     @error('name')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Slug</label>
-                    <input type="text" value="{{ $role->slug }}" class="form-control" disabled>
-                    <div class="form-text">Slug tidak dapat diubah.</div>
-                </div>
+                @if ($isEdit)
+                    <div class="mb-3">
+                        <label class="form-label">Slug</label>
+                        <input type="text" value="{{ $role->slug }}" class="form-control" disabled>
+                        <div class="form-text">The slug cannot be changed.</div>
+                    </div>
+                @endif
 
                 <div class="mb-3">
-                    <label for="description" class="form-label">Deskripsi</label>
+                    <label for="description" class="form-label">Description</label>
                     <textarea name="description" id="description" rows="3"
-                              class="form-control @error('description') is-invalid @enderror">{{ old('description', $role->description) }}</textarea>
+                              class="form-control @error('description') is-invalid @enderror">{{ old('description', $role->description ?? '') }}</textarea>
                     @error('description')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -37,8 +48,8 @@
 
                 <div class="mb-3">
                     <label class="form-label">Permissions</label>
-                    @if ($role->slug === 'super-admin')
-                        <div class="alert alert-info mb-0">Super Admin otomatis memiliki semua permission.</div>
+                    @if ($isEdit && $role->slug === 'super-admin')
+                        <div class="alert alert-info mb-0">Super Admin automatically has all permissions.</div>
                     @else
                         @foreach ($permissions as $module => $items)
                             <div class="card mb-2">
@@ -52,7 +63,7 @@
                                                 <div class="form-check">
                                                     <input type="checkbox" name="permissions[]" value="{{ $permission->id }}"
                                                            id="perm-{{ $permission->id }}" class="form-check-input"
-                                                           {{ in_array($permission->id, old('permissions', $role->permissions->pluck('id')->all())) ? 'checked' : '' }}>
+                                                           {{ in_array($permission->id, old('permissions', $isEdit ? $role->permissions->pluck('id')->all() : [])) ? 'checked' : '' }}>
                                                     <label for="perm-{{ $permission->id }}" class="form-check-label">{{ $permission->name }}</label>
                                                 </div>
                                             </div>
@@ -68,8 +79,8 @@
                 </div>
 
                 <div class="d-flex gap-2">
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                    <a href="{{ route('roles.index') }}" class="btn btn-secondary">Batal</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="{{ route('roles.index') }}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>

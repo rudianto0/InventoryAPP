@@ -14,10 +14,10 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $roles = [
-            ['name' => 'Super Admin', 'slug' => 'super-admin', 'description' => 'Akses penuh ke semua fitur aplikasi'],
-            ['name' => 'Admin', 'slug' => 'admin', 'description' => 'Mengelola user, goods-in, goods-out, dan stock'],
-            ['name' => 'Staff', 'slug' => 'staff', 'description' => 'Mengelola goods-in, goods-out, dan melihat stock'],
-            ['name' => 'Manager', 'slug' => 'manager', 'description' => 'Melihat goods-in, goods-out, stock, dan user'],
+            ['name' => 'Super Admin', 'slug' => 'super-admin', 'description' => 'Full access to all application features'],
+            ['name' => 'Admin', 'slug' => 'admin', 'description' => 'Manage users, stock-in, stock-out, and stock'],
+            ['name' => 'Staff', 'slug' => 'staff', 'description' => 'Manage stock-in, stock-out, and view stock'],
+            ['name' => 'Manager', 'slug' => 'manager', 'description' => 'View stock-in, stock-out, stock, and users'],
         ];
 
         foreach ($roles as $data) {
@@ -32,7 +32,7 @@ class RoleSeeder extends Seeder
      */
     private function attachPermissions(): void
     {
-        // Admin: semua kecuali users.delete & roles.*
+        // Admin: all except users.delete & roles.*
         Role::where('slug', 'admin')->first()?->permissions()->sync(
             Permission::where('slug', '!=', 'users.delete')
                 ->where('module', '!=', 'roles')
@@ -40,17 +40,17 @@ class RoleSeeder extends Seeder
                 ->all()
         );
 
-        // Staff: goods-in.*, goods-out.*, stock.read
+        // Staff: stock-in.*, stock-out.*, stock.read
         Role::where('slug', 'staff')->first()?->permissions()->sync(
-            Permission::whereIn('module', ['goods-in', 'goods-out'])
+            Permission::whereIn('module', ['stock-in', 'stock-out'])
                 ->orWhere('slug', 'stock.read')
                 ->pluck('id')
                 ->all()
         );
 
-        // Manager: goods-in.read, goods-out.read, stock.read, users.read
+        // Manager: stock-in.read, stock-out.read, stock.read, users.read
         Role::where('slug', 'manager')->first()?->permissions()->sync(
-            Permission::whereIn('slug', ['goods-in.read', 'goods-out.read', 'stock.read', 'users.read'])
+            Permission::whereIn('slug', ['stock-in.read', 'stock-out.read', 'stock.read', 'users.read'])
                 ->pluck('id')
                 ->all()
         );

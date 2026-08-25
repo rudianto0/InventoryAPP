@@ -13,7 +13,7 @@ use Illuminate\View\View;
 class UserController extends Controller
 {
     /**
-     * List users with search, filter, and pagination.
+     * List users with search and pagination.
      */
     public function index(Request $request): View
     {
@@ -24,12 +24,6 @@ class UserController extends Controller
                 $q->where('name', 'like', "%{$search}%")
                     ->orWhere('email', 'like', "%{$search}%");
             });
-        }
-
-        if ($status = $request->query('status')) {
-            if (in_array($status, ['1', '0'], true)) {
-                $query->where('is_active', $status === '1');
-            }
         }
 
         $users = $query->latest()->paginate(10)->withQueryString();
@@ -44,7 +38,7 @@ class UserController extends Controller
     {
         $roles = Role::orderBy('name')->get();
 
-        return view('users.create', compact('roles'));
+        return view('users.create-or-edit', compact('roles'));
     }
 
     /**
@@ -61,7 +55,7 @@ class UserController extends Controller
 
         $user->roles()->sync($request->input('roles', []));
 
-        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
+        return redirect()->route('users.index')->with('success', 'User added successfully.');
     }
 
     /**
@@ -71,7 +65,7 @@ class UserController extends Controller
     {
         $roles = Role::orderBy('name')->get();
 
-        return view('users.edit', compact('user', 'roles'));
+        return view('users.create-or-edit', compact('user', 'roles'));
     }
 
     /**
@@ -93,7 +87,7 @@ class UserController extends Controller
         $user->roles()->sync($request->input('roles', []));
         $user->clearPermissionCache();
 
-        return redirect()->route('users.index')->with('success', 'User berhasil diperbarui.');
+        return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     /**
@@ -102,17 +96,17 @@ class UserController extends Controller
     public function destroy(User $user): RedirectResponse
     {
         if ($user->id === auth()->id()) {
-            return redirect()->route('users.index')->with('error', 'Anda tidak dapat menonaktifkan akun sendiri.');
+            return redirect()->route('users.index')->with('error', 'You cannot deactivate your own account.');
         }
 
         if ($user->isSuperAdmin()) {
-            return redirect()->route('users.index')->with('error', 'Super Admin tidak dapat dinonaktifkan.');
+            return redirect()->route('users.index')->with('error', 'Super Admin cannot be deactivated.');
         }
 
         $user->update(['is_active' => false]);
         $user->clearPermissionCache();
 
-        return redirect()->route('users.index')->with('success', 'User berhasil dinonaktifkan.');
+        return redirect()->route('users.index')->with('success', 'User deactivated successfully.');
     }
 
     /**
@@ -121,12 +115,12 @@ class UserController extends Controller
     public function toggle(User $user): RedirectResponse
     {
         if ($user->id === auth()->id()) {
-            return redirect()->route('users.index')->with('error', 'Anda tidak dapat mengubah status akun sendiri.');
+            return redirect()->route('users.index')->with('error', 'You cannot change your own account status.');
         }
 
         $user->update(['is_active' => ! $user->is_active]);
         $user->clearPermissionCache();
 
-        return redirect()->route('users.index')->with('success', 'Status user berhasil diubah.');
+        return redirect()->route('users.index')->with('success', 'User status updated successfully.');
     }
 }
